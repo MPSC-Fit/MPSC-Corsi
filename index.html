@@ -14,7 +14,7 @@
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#EEF2F8}
 body::before{content:'';position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top);background:#071B3E}
-iframe{z-index:1;position:fixed;left:0;width:100%;top:env(safe-area-inset-top);height:calc(var(--vh, 100vh) - env(safe-area-inset-top));border:0;background:#EEF2F8}
+iframe{z-index:1;position:fixed;left:0;right:0;top:env(safe-area-inset-top);bottom:0;width:100%;border:0;background:#EEF2F8}
 #msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font:600 18px system-ui,sans-serif;z-index:-1}
 #avviso{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);background:rgba(7,27,62,.92);color:#fff;font:600 13px system-ui,sans-serif;padding:7px 14px;border-radius:20px;z-index:5;display:none}
 </style></head>
@@ -47,14 +47,12 @@ window.addEventListener('message', function (e) {
   ST.set(d.k, String(d.v || ''));
   if (d.v) avviso('Accesso salvato');
 });
-// Altezza fissa presa dallo schermo: Google, da solo, la calcola troppo bassa su iPhone.
-function misura() { document.documentElement.style.setProperty('--vh', window.innerHeight + 'px'); }
-misura();
-window.addEventListener('resize', misura);
-window.addEventListener('orientationchange', function () { setTimeout(misura, 300); });
 var f = document.createElement('iframe');
-f.src = APP + (q.length ? '?' + q.join('&') : '');
 f.setAttribute('allow', 'clipboard-write; fullscreen; autoplay');
 document.body.appendChild(f);
+// altezza davvero visibile, passata all'app così il menu in basso resta dentro lo schermo
+var vh = Math.round(f.getBoundingClientRect().height);
+if (vh > 300) q.push('h=' + vh);
+f.src = APP + (q.length ? '?' + q.join('&') : '');
 </script>
 </body></html>
